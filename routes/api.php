@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\FaceController;
+use App\Http\Controllers\SceanceController;
 use App\Http\Controllers\StudentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -32,4 +33,13 @@ Route::controller(ClasseController::class)->group(function() {
     Route::get('/classes/{id}', 'show');
     Route::put('/classes/edit/{id}', 'update');
     Route::delete('/classes/{id}', 'destroy');
+});
+
+// Routes pour les séances
+Route::controller(SceanceController::class)->group(function() {
+    Route::get('/sceances', 'index');
+    Route::post('/sceances/add', 'store');
+    Route::get('/sceances/{id}', 'show');
+    Route::put('/sceances/edit/{id}', 'update');
+    Route::delete('/sceances/{id}', 'destroy');
 });
