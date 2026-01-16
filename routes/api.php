@@ -21,12 +21,13 @@ Route::controller(StudentController::class)->group(function() {
 
 // Routes pour l'encodage
 Route::controller(FaceController::class)->group(function() {
-    Route::post('/etudiants/encode', 'encode');
+    Route::post('/etudiants/{id}/encode', 'encode');
 });
 
 // Routes pour les classes
 Route::controller(ClasseController::class)->group(function() {
     Route::get('/classes', 'index');
+    Route::get('/classes/simple', 'allClasses');
     Route::post('/classes/add', 'store');
     Route::get('/classes/{id}', 'show');
     Route::put('/classes/edit/{id}', 'update');

@@ -27,6 +27,23 @@ class ClasseController extends Controller
         }
     }
 
+    // LISTE SIMPLE DES CLASSES
+    public function allClasses()
+    {
+        try {
+            $classes = Classe::all();
+            return response()->json([
+                'success' => true,
+                'data' => $classes
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erreur lors du chargement des classes'
+            ], 500);
+        }
+    }
+
     // CREER UNE CLASSE
     public function store(Request $request)
     {

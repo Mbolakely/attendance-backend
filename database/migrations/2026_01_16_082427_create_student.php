@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nom');
             $table->string('email');
             $table->string('id_classe');
-            $table->string('num_matricule');
+            $table->string('num_matricule')->unique();
             $table->string('prenom')->nullable();
             $table->string('cin')->unique();
             $table->enum('sexe', ['Femme', 'Homme']);

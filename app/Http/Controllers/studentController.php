@@ -11,13 +11,43 @@ use Illuminate\Http\Request;
 class StudentController extends Controller
 {
     // INDEX FUNCTION
-    public function index()
+    // public function index()
+    // {
+    //     $students = Student::with('classe')->get();
+    //     try {
+    //         return response()->json([
+    //             'success' => true,
+    //             'data' => $students
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => 'Erreur lors du chargement des étudiants'
+    //         ], 500);
+    //     }
+    // }
+
+
+    public function index(Request $request)
     {
-        $students = Student::with('classe')->get();
         try {
+            $perPage = (int) $request->query('per_page', 10);
+            $page = (int) $request->query('page', 1);
+
+            $students = Student::with('classe')
+                ->paginate($perPage, ['*'], 'page', $page);
+
             return response()->json([
                 'success' => true,
-                'data' => $students
+                'data' => $students->items(),
+                'pagination' => [
+                    'current_page' => $students->currentPage(),
+                    'last_page' => $students->lastPage(),
+                    'per_page' => $students->perPage(),
+                    'total' => $students->total(),
+                    'from' => $students->firstItem(),
+                    'to' => $students->lastItem(),
+                ]
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -26,6 +56,7 @@ class StudentController extends Controller
             ], 500);
         }
     }
+
 
     // STORE FUNCTION
     public function store(Request $request)
