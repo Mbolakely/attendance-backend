@@ -39,8 +39,23 @@ class SceanceController extends Controller
                 'salle' => 'required|string|max:50',
                 'matiere' => 'required|string|max:100',
                 'professeur' => 'required|string|max:100',
-                'status' => 'required|in:active,inactive',
+                'status' => 'required|in:planifiee,annulee,en_cours,terminee',
             ]);
+
+            // Normalization
+             $data['salle'] = strtoupper(trim($data['salle']));
+            $data['professeur'] = strtoupper(trim($data['professeur']));
+
+            // deflault status
+            $data['status'] = 'planifiee';
+
+            // Conflict message
+              if ($msg = $this->hasConflict($data)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $msg
+                ], 422);
+            }
 
             $sceance = Sceance::create($data);
 
@@ -95,6 +110,13 @@ class SceanceController extends Controller
         try {
             $sceance = Sceance::findOrFail($id);
 
+              if (in_array($sceance->status, ['en_cours', 'terminee'])) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Modification interdite : séance déjà démarrée ou terminée'
+                ], 403);
+            }
+
             $data = $request->validate([
                 'classe_id' => 'sometimes|exists:classes,id',
                 'date' => 'sometimes|date',
@@ -105,6 +127,19 @@ class SceanceController extends Controller
                 'professeur' => 'sometimes|string|max:100',
                 'status' => 'required|in:active,inactive',
             ]);
+
+            // Normalization
+            $merged = array_merge($sceance->toArray(), $data);
+            $data['salle'] = strtoupper(trim($data['salle']));
+            $data['professeur'] = strtoupper(trim($data['professeur']));
+            $data['status'] = strtoupper(trim($data['status']));
+
+              if ($msg = $this->hasConflict($merged, $sceance->id)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $msg
+                ], 422);
+            }
 
             $sceance->update($data);
 
@@ -158,4 +193,30 @@ class SceanceController extends Controller
             ], 500);
         }
     }
+
+    // Function conflict 
+    private function hasConflict(array $data, $ignoreId = null): ?string
+{
+    $query = Sceance::where('date', $data['date'])
+        ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
+        ->where(function ($q) use ($data) {
+            $q->where('debut_sceance', '<', $data['fin_sceance'])
+              ->where('fin_sceance', '>', $data['debut_sceance']);
+        });
+
+    if ($query->where('salle', $data['salle'])->exists()) {
+        return 'Salle déjà occupée sur ce créneau';
+    }
+
+    if ($query->where('professeur', $data['professeur'])->exists()) {
+        return 'Le professeur a déjà une séance à cette heure';
+    }
+
+    if ($query->where('classe_id', $data['classe_id'])->exists()) {
+        return 'La classe a déjà une séance à cette heure';
+    }
+
+    return null;
+}
+
 }

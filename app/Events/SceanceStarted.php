@@ -21,7 +21,7 @@ class SceanceStarted implements ShouldBroadcast
 
     public function broadcastOn()
     {
-        return new Channel('classe.' . $this->classe_id);
+        return new Channel('sceances.');
     }
 
     public function broadcastAs()
