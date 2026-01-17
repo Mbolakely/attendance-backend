@@ -19,15 +19,15 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-          $this->call([SceanceSeeder::class,]);
+        //   $this->call([SceanceSeeder::class,]);
         // Seed des niveaux
-        // $this->call(NiveauxSeed::class);
+        $this->call(NiveauxSeed::class);
 
         // // Seed des parcours
-        // $this->call(ParcoursSeed::class);
+        $this->call(ParcoursSeed::class);
 
         // // Seed des classes (avec les groupes)
-        // $this->call(ClasseSeed::class);
+        $this->call(ClasseSeed::class);
 
         $this->call(SceanceSeed::class);
 
