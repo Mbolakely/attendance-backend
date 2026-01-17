@@ -34,11 +34,12 @@ class SceanceController extends Controller
             $data = $request->validate([
                 'classe_id' => 'required|exists:classes,id',
                 'date' => 'required|date',
-                'debut_sceance' => 'required|date_format:H:i',
-                'fin_sceance' => 'required|date_format:H:i|after:debut_sceance',
+                'debut_sceance' => 'required|date_format:H:i:s',
+                'fin_sceance' => 'required|date_format:H:i:s|after:debut_sceance',
                 'salle' => 'required|string|max:50',
                 'matiere' => 'required|string|max:100',
                 'professeur' => 'required|string|max:100',
+                'status' => 'required|in:active,inactive',
             ]);
 
             $sceance = Sceance::create($data);
@@ -97,11 +98,12 @@ class SceanceController extends Controller
             $data = $request->validate([
                 'classe_id' => 'sometimes|exists:classes,id',
                 'date' => 'sometimes|date',
-                'debut_sceance' => 'sometimes|date_format:H:i',
-                'fin_sceance' => 'sometimes|date_format:H:i|after:debut_sceance',
+                'debut_sceance' => 'required|date_format:H:i:s',
+                'fin_sceance'   => 'required|date_format:H:i:s|after:debut_sceance',
                 'salle' => 'sometimes|string|max:50',
                 'matiere' => 'sometimes|string|max:100',
                 'professeur' => 'sometimes|string|max:100',
+                'status' => 'required|in:active,inactive',
             ]);
 
             $sceance->update($data);
