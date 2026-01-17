@@ -29,5 +29,8 @@ class DatabaseSeeder extends Seeder
         // // Seed des classes (avec les groupes)
         // $this->call(ClasseSeed::class);
 
+        $this->call(SceanceSeed::class);
+
+
     }
 }
