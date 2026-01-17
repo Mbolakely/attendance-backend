@@ -14,22 +14,23 @@ class Kernel extends ConsoleKernel
   {
     $schedule->call(function () {
       $now = now('Indian/Antananarivo');
+      
+      Log::info('Scheduler tick: '.now());
+
       $oneMinuteAgo = $now->copy()->subMinute();
 
       $sceances = Sceance::whereDate('date', $now->toDateString())
+        ->whereTime('debut_sceance', '>', $oneMinuteAgo->toTimeString())
         ->whereTime('debut_sceance', '<=', $now->toTimeString())
-        ->whereTime('debut_sceance', '>=', $oneMinuteAgo->toTimeString())
         ->get();
 
       foreach ($sceances as $sceance) {
-        // Event START immédiat
         event(new SceanceStarted($sceance->id, $sceance->classe_id));
 
-        // Job END après 5 minutes
         EndSceanceJob::dispatch($sceance->id, $sceance->classe_id)
-          ->delay(now()->addMinutes(5));
+          ->delay($now->copy()->addMinutes(5));
 
-          Log::info("EndSceanceJob planifié pour Sceance {$sceance->id}");
+        Log::info("Sceance {$sceance->id} START + END planifié");
       }
     })->everyMinute();
   }

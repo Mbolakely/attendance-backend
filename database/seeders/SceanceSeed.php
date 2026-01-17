@@ -9,39 +9,40 @@ use Carbon\Carbon;
 
 class SceanceSeed extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Récupère toutes les classes existantes
-        $classes = Classe::all();
+        // Prendre UNE seule classe
+        $classe = Classe::first();
 
-        if ($classes->isEmpty()) {
-            $this->command->info("Aucune classe trouvée. Veuillez d'abord créer des classes.");
+        if (!$classe) {
+            $this->command->warn("Aucune classe trouvée.");
             return;
         }
 
-        // Horaires de test (par exemple 08:00-08:30 et 09:00-09:30)
-        $horaires = [
-            ['debut' => '08:00:00', 'fin' => '08:30:00', 'salle' => 'A101', 'matiere' => 'Math', 'professeur' => 'Prof A'],
-            ['debut' => '09:00:00', 'fin' => '09:30:00', 'salle' => 'B202', 'matiere' => 'Physique', 'professeur' => 'Prof B'],
-        ];
+        // Nettoyage (optionnel mais recommandé pour tests)
+        Sceance::whereDate('date', today())->delete();
 
-        foreach ($classes as $classe) {
-            foreach ($horaires as $h) {
-                Sceance::create([
-                    'classe_id' => $classe->id,
-                    'date' => Carbon::today()->toDateString(), 
-                    'debut_sceance' => $h['debut'],
-                    'fin_sceance' => $h['fin'],
-                    'salle' => $h['salle'],
-                    'matiere' => $h['matiere'],
-                    'professeur' => $h['professeur'],
-                ]);
-            }
+        // Heure de départ : maintenant + 2 minutes
+        $startTime = now('Indian/Antananarivo')->addMinutes(2);
+
+        for ($i = 0; $i < 5; $i++) {
+
+            $debut = $startTime->copy()->addMinutes($i * 10);
+            $fin   = $debut->copy()->addMinutes(30);
+
+            Sceance::create([
+                'classe_id'     => $classe->id,
+                'date'          => $debut->toDateString(),
+                'debut_sceance' => $debut->format('H:i:s'),
+                'fin_sceance'   => $fin->format('H:i:s'),
+                'salle'         => 'Salle ' . chr(65 + $i), 
+                'matiere'       => 'Matière ' . ($i + 1),
+                'professeur'    => 'Prof ' . ($i + 1),
+            ]);
+
+            $this->command->info("Séance " . ($i + 1) . " créée : " . $debut->format('H:i') . " - " . $fin->format('H:i'));
         }
 
-        $this->command->info("Seed des séances de test terminé pour aujourd'hui !");
+        $this->command->info("5 séances créées pour le test.");
     }
 }
