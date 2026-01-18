@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Sceance;
 use App\Events\SceanceEnded;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -14,20 +15,25 @@ class EndSceanceJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public int $sceanceId;
-    public int $classeId;
+    public Sceance $sceance;
 
-    public function __construct(int $sceanceId, int $classeId)
+    public function __construct(Sceance $sceance)
     {
-        $this->sceanceId = $sceanceId;
-        $this->classeId = $classeId;
-        
-        Log::info("Event SceanceEnded pour la sceance {$this->sceanceId}");
+        $this->sceance = $sceance;
     }
 
     public function handle(): void
     {
-        Log::info("Sceance {$this->sceanceId} END déclenchée pour la classe {$this->classeId}");
-        event(new SceanceEnded($this->sceanceId, $this->classeId));
+        if ($this->sceance->status !== 'en_cours') {
+            return;
+        }
+
+        // $this->sceance->update([
+        //     'status' => 'terminee',
+        // ]);
+
+        Log::info("Sceance {$this->sceance->id} END déclenchée");
+
+        event(new SceanceEnded($this->sceance));
     }
 }

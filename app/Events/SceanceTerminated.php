@@ -4,20 +4,14 @@ namespace App\Events;
 
 use App\Models\Sceance;
 use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Queue\SerializesModels;
 
-class SceanceEnded implements ShouldBroadcast
+class SceanceTerminated implements ShouldBroadcast
 {
-    use InteractsWithSockets, SerializesModels;
+    use SerializesModels;
 
-    public Sceance $sceance;
-
-    public function __construct(Sceance $sceance)
-    {
-        $this->sceance = $sceance->load('classe');
-    }
+    public function __construct(public Sceance $sceance) {}
 
     public function broadcastOn(): Channel
     {
@@ -26,6 +20,13 @@ class SceanceEnded implements ShouldBroadcast
 
     public function broadcastAs(): string
     {
-        return 'sceance.ended';
+        return 'sceance.terminated';
+    }
+
+    public function broadcastWith(): array
+    {
+        return [
+            'sceance' => $this->sceance->fresh(),
+        ];
     }
 }

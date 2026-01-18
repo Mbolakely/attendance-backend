@@ -38,6 +38,7 @@ class SceanceSeed extends Seeder
                 'salle'         => 'Salle ' . chr(65 + $i), 
                 'matiere'       => 'Matière ' . ($i + 1),
                 'professeur'    => 'Prof ' . ($i + 1),
+                'status'        => 'planifiee'
             ]);
 
             $this->command->info("Séance " . ($i + 1) . " créée : " . $debut->format('H:i') . " - " . $fin->format('H:i'));

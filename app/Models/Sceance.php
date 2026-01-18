@@ -17,6 +17,7 @@ class Sceance extends Model
         'salle',
         'matiere',
         'professeur',
+        'status'
     ];
 
       public function classe()
