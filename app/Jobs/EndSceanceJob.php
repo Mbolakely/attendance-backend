@@ -28,9 +28,9 @@ class EndSceanceJob implements ShouldQueue
             return;
         }
 
-        $this->sceance->update([
-            'status' => 'terminee',
-        ]);
+        // $this->sceance->update([
+        //     'status' => 'terminee',
+        // ]);
 
         Log::info("Sceance {$this->sceance->id} END déclenchée");
 
