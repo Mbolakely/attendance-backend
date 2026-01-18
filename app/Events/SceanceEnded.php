@@ -2,9 +2,9 @@
 
 namespace App\Events;
 
+use App\Models\Sceance;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Queue\SerializesModels;
 
@@ -12,21 +12,19 @@ class SceanceEnded implements ShouldBroadcast
 {
     use InteractsWithSockets, SerializesModels;
 
-    public $sceance_id;
-    public $classe_id;
+    public Sceance $sceance;
 
-    public function __construct($sceance_id, $classe_id)
+    public function __construct(Sceance $sceance)
     {
-        $this->sceance_id = $sceance_id;
-        $this->classe_id = $classe_id;
+        $this->sceance = $sceance->load('classe');
     }
 
-    public function broadcastOn()
+    public function broadcastOn(): Channel
     {
         return new Channel('sceances');
     }
 
-    public function broadcastAs()
+    public function broadcastAs(): string
     {
         return 'sceance.ended';
     }

@@ -43,14 +43,14 @@ class SceanceController extends Controller
             ]);
 
             // Normalization
-             $data['salle'] = strtoupper(trim($data['salle']));
+            $data['salle'] = strtoupper(trim($data['salle']));
             $data['professeur'] = strtoupper(trim($data['professeur']));
 
             // deflault status
             $data['status'] = 'planifiee';
 
             // Conflict message
-              if ($msg = $this->hasConflict($data)) {
+            if ($msg = $this->hasConflict($data)) {
                 return response()->json([
                     'success' => false,
                     'message' => $msg
@@ -64,14 +64,12 @@ class SceanceController extends Controller
                 'message' => 'Séance créée avec succès',
                 'data' => $sceance
             ], 201);
-
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur de validation',
                 'errors' => $e->errors()
             ], 422);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -110,7 +108,7 @@ class SceanceController extends Controller
         try {
             $sceance = Sceance::findOrFail($id);
 
-              if (in_array($sceance->status, ['en_cours', 'terminee'])) {
+            if (in_array($sceance->status, ['en_cours', 'terminee'])) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Modification interdite : séance déjà démarrée ou terminée'
@@ -125,7 +123,7 @@ class SceanceController extends Controller
                 'salle' => 'sometimes|string|max:50',
                 'matiere' => 'sometimes|string|max:100',
                 'professeur' => 'sometimes|string|max:100',
-                'status' => 'required|in:active,inactive',
+                'status' => 'required|in:planifiee,annulee,en_cours,terminee',
             ]);
 
             // Normalization
@@ -134,7 +132,7 @@ class SceanceController extends Controller
             $data['professeur'] = strtoupper(trim($data['professeur']));
             $data['status'] = strtoupper(trim($data['status']));
 
-              if ($msg = $this->hasConflict($merged, $sceance->id)) {
+            if ($msg = $this->hasConflict($merged, $sceance->id)) {
                 return response()->json([
                     'success' => false,
                     'message' => $msg
@@ -148,20 +146,17 @@ class SceanceController extends Controller
                 'message' => 'Séance mise à jour',
                 'data' => $sceance
             ]);
-
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Séance introuvable'
             ], 404);
-
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Erreur de validation',
                 'errors' => $e->errors()
             ], 422);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -196,27 +191,26 @@ class SceanceController extends Controller
 
     // Function conflict 
     private function hasConflict(array $data, $ignoreId = null): ?string
-{
-    $query = Sceance::where('date', $data['date'])
-        ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
-        ->where(function ($q) use ($data) {
-            $q->where('debut_sceance', '<', $data['fin_sceance'])
-              ->where('fin_sceance', '>', $data['debut_sceance']);
-        });
+    {
+        $query = Sceance::where('date', $data['date'])
+            ->when($ignoreId, fn($q) => $q->where('id', '!=', $ignoreId))
+            ->where(function ($q) use ($data) {
+                $q->where('debut_sceance', '<', $data['fin_sceance'])
+                    ->where('fin_sceance', '>', $data['debut_sceance']);
+            });
 
-    if ($query->where('salle', $data['salle'])->exists()) {
-        return 'Salle déjà occupée sur ce créneau';
+        if ($query->where('salle', $data['salle'])->exists()) {
+            return 'Salle déjà occupée sur ce créneau';
+        }
+
+        if ($query->where('professeur', $data['professeur'])->exists()) {
+            return 'Le professeur a déjà une séance à cette heure';
+        }
+
+        if ($query->where('classe_id', $data['classe_id'])->exists()) {
+            return 'La classe a déjà une séance à cette heure';
+        }
+
+        return null;
     }
-
-    if ($query->where('professeur', $data['professeur'])->exists()) {
-        return 'Le professeur a déjà une séance à cette heure';
-    }
-
-    if ($query->where('classe_id', $data['classe_id'])->exists()) {
-        return 'La classe a déjà une séance à cette heure';
-    }
-
-    return null;
-}
-
 }
