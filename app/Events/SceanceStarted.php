@@ -21,7 +21,7 @@ class SceanceStarted implements ShouldBroadcast
 
     public function broadcastOn()
     {
-        return new Channel('sceances.');
+        return new Channel('sceances');
     }
 
     public function broadcastAs()

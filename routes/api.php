@@ -22,7 +22,7 @@ Route::controller(StudentController::class)->group(function() {
 
 // Routes pour l'encodage
 Route::controller(FaceController::class)->group(function() {
-    Route::post('/etudiants/{id}/encode', 'encode');
+    Route::post('/etudiants/{matricule}/encode', 'encode');
 });
 
 // Routes pour les classes
@@ -33,6 +33,7 @@ Route::controller(ClasseController::class)->group(function() {
     Route::get('/classes/{id}', 'show');
     Route::put('/classes/edit/{id}', 'update');
     Route::delete('/classes/{id}', 'destroy');
+    Route::get('/classes/{id}/etudiants', 'students');
 });
 
 // Routes pour les séances

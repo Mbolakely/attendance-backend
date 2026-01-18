@@ -9,14 +9,14 @@ use Illuminate\Validation\ValidationException;
 
 class FaceController extends Controller
 {
-    public function encode(Request $request, $id)
+    public function encode(Request $request, $matricule)
     {
         try {
             $request->validate([
                 'encodage_facial' => 'required|array'
             ]);
 
-            $student = student::findOrFail($id);
+            $student = student::where('num_matricule', $matricule)->firstOrFail();
 
             if (!empty($student->encodage_facial)) {
                 return response()->json([

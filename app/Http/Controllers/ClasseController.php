@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Classe;
+use App\Models\student;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Validation\ValidationException;
@@ -164,5 +165,27 @@ class ClasseController extends Controller
                 'message' => 'Erreur lors de la suppression de la classe'
             ], 500);
         }
+    }
+
+     public function students($id)
+    {
+        $students = student::where('classe_id', $id)
+            ->select([
+                'id',
+                'nom',
+                'prenom',
+                'num_matricule',
+                // 'email',
+                // 'cin',
+                // 'sexe',
+                // 'telephone',
+                // 'adresse',
+                // 'date_naissance',
+                // 'date_inscription',
+                'encodage_facial',
+                'classe_id'
+            ])->get();
+
+        return response()->json($students);
     }
 }
