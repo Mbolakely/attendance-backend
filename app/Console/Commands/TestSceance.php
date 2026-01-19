@@ -41,7 +41,7 @@ class TestSceance extends Command
 
                 $this->info("Sceance {$sceance->id} STARTED");
 
-                EndSceanceJob::dispatch($sceance->id)
+                EndSceanceJob::dispatch($sceance)
                     ->delay($debut->copy()->addMinutes(5));
 
                 $this->info("Sceance {$sceance->id} END planifiée");

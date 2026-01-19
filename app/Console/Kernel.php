@@ -25,6 +25,7 @@ class Kernel extends ConsoleKernel
         ->get();
 
       foreach ($sceances as $sceance) {
+        // à corriger
         event(new SceanceStarted($sceance->id, $sceance->classe_id));
 
         EndSceanceJob::dispatch($sceance->id, $sceance->classe_id)
