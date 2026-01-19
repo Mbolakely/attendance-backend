@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\Notifiable;
 
 class student extends Model
 {
+    use Notifiable;
+    
      protected $table = 'students';
 
     protected $fillable = [
@@ -32,5 +35,10 @@ class student extends Model
      public function classe()
     {
         return $this->belongsTo(Classe::class);
+    }
+
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
     }
 }

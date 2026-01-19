@@ -29,12 +29,12 @@ class TestSceance extends Command
 
             if ($now->between($debut, $debut->copy()->addMinute())) {
 
-                if ($sceance->etat === 'en_cours') {
+                if ($sceance->status === 'en_cours') {
                     continue;
                 }
 
                 $sceance->update([
-                    'etat' => 'en_cours',
+                    'status' => 'en_cours',
                 ]);
 
                 event(new SceanceStarted($sceance));

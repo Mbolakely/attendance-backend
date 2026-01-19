@@ -25,4 +25,14 @@ Classe extends Model
     {
         return $this->belongsTo(Parcours::class);
     }
+
+    public function sceances()
+    {
+        return $this->hasMany(Sceance::class);
+    }
+
+    public function students()
+    {
+        return $this->hasMany(Student::class);
+    }
 }

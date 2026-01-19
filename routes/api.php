@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\FaceController;
 use App\Http\Controllers\SceanceController;
@@ -43,4 +44,10 @@ Route::controller(SceanceController::class)->group(function() {
     Route::get('/sceances/{id}', 'show');
     Route::put('/sceances/edit/{id}', 'update');
     Route::delete('/sceances/{id}', 'destroy');
+});
+
+//Routes pour le pointage
+Route::controller(AttendanceController::class)->group(function() {
+    Route::post('/pointage', 'attend');
+    Route::post('/pointage/{attendance}/justificatif', 'uploadJustificatif');
 });

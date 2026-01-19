@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('sceance', function (Blueprint $table) {
+        Schema::table('sceances', function (Blueprint $table) {
             $table->string('status')->default('inactive');
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('sceance', function (Blueprint $table) {
+        Schema::table('sceances', function (Blueprint $table) {
             //
         });
     }
