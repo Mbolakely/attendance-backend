@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AbsenceController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\ChartController;
 use App\Http\Controllers\ClasseController;
 use App\Http\Controllers\FaceController;
 use App\Http\Controllers\SceanceController;
@@ -50,4 +52,16 @@ Route::controller(SceanceController::class)->group(function() {
 Route::controller(AttendanceController::class)->group(function() {
     Route::post('/pointage', 'attend');
     Route::post('/pointage/{attendance}/justificatif', 'uploadJustificatif');
+});
+
+// Routes pour les absences
+Route::controller(AbsenceController::class)->group(function() {
+    Route::get('/absences', 'absences');
+    Route::get('/absences/kpi/global', 'globalKpi');
+    Route::get('/absences/kpi/{student}', 'studentKpi');
+});
+
+//Routes pour les graphiques
+Route::controller(ChartController::class)->group(function() {
+    Route::get('/charts', 'index');
 });

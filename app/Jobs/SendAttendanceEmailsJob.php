@@ -28,4 +28,18 @@ class SendAttendanceEmailsJob implements ShouldQueue
                 ));
         }
     }
+    // public function __construct(public int $sceanceId) {}
+
+    // public function handle()
+    // {
+    //     $sceance = Sceance::with('classe.students')->findOrFail($this->sceanceId);
+
+    //     foreach ($sceance->attendances as $attendance) {
+    //          $attendance->student
+    //             ->notify(new AttendanceStatusNotification(
+    //                 $sceance->id,
+    //                 $attendance->id
+    //             ));
+    //     }
+    // }
 }
