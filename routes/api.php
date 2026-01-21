@@ -59,6 +59,7 @@ Route::controller(AbsenceController::class)->group(function() {
     Route::get('/absences', 'absences');
     Route::get('/absences/kpi/global', 'globalKpi');
     Route::get('/absences/kpi/{student}', 'studentKpi');
+    Route::post('/absences/manually/{id}', 'updateManual');
 });
 
 //Routes pour les graphiques
