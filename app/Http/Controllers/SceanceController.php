@@ -189,6 +189,62 @@ class SceanceController extends Controller
         }
     }
 
+    public function updateDate(Request $request, $id)
+{
+    $sceance = Sceance::find($id);
+
+    if (!$sceance) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Séance introuvable',
+        ], 404);
+    }
+
+    // Bloquer séance terminée
+    if ($sceance->status === 'terminee') {
+        return response()->json([
+            'success' => false,
+            'message' => 'Impossible de modifier une séance terminée',
+        ], 403);
+    }
+
+    $data = $request->validate([
+        'date' => 'required|date',
+        'debut_sceance' => 'required|date_format:H:i:s',
+        'fin_sceance' => 'required|date_format:H:i:s|after:debut_sceance',
+    ]);
+
+    $conflictData = [
+        'date' => $data['date'],
+        'debut_sceance' => $sceance->debut_sceance,
+        'fin_sceance' => $sceance->fin_sceance,
+        'salle' => $sceance->salle,
+        'professeur' => $sceance->professeur,
+        'classe_id' => $sceance->classe_id,
+    ];
+
+    // Vérification des conflits
+    if ($message = $this->hasConflict($conflictData, $sceance->id)) {
+        return response()->json([
+            'success' => false,
+            'message' => $message,
+        ], 409);
+    }
+
+    // Mise à jour
+    $sceance->update([
+        'date' => $data['date'],
+        'debut_sceance' => $data['debut_sceance'],
+        'fin_sceance' => $data['fin_sceance'],
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Date de la séance mise à jour avec succès',
+        'data' => $sceance,
+    ]);
+}
+
     // Function conflict 
     private function hasConflict(array $data, $ignoreId = null): ?string
     {

@@ -46,6 +46,7 @@ Route::controller(SceanceController::class)->group(function() {
     Route::get('/sceances/{id}', 'show');
     Route::put('/sceances/edit/{id}', 'update');
     Route::delete('/sceances/{id}', 'destroy');
+    Route::put('/sceances/editdate/{id}',  'updateDate');
 });
 
 //Routes pour le pointage
